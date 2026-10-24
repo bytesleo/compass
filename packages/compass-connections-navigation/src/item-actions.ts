@@ -352,7 +352,7 @@ export const databaseContextMenuActions = ({
   isPerformanceTabAvailable,
   isPerformanceTabSupported,
   isAtlas,
-  isExportCollectionsEnabled = false,
+  isCollectionsImportExportEnabled = false,
 }: {
   hasWriteActionsDisabled: boolean;
   canDeleteDatabase: boolean;
@@ -360,7 +360,7 @@ export const databaseContextMenuActions = ({
   isPerformanceTabAvailable: boolean;
   isPerformanceTabSupported: boolean;
   isAtlas: boolean;
-  isExportCollectionsEnabled?: boolean;
+  isCollectionsImportExportEnabled?: boolean;
 }): NavigationItemActions => {
   return stripNullActions([
     // Database-specific actions
@@ -371,11 +371,19 @@ export const databaseContextMenuActions = ({
           icon: 'Plus',
           label: 'Create collection',
         },
-    isExportCollectionsEnabled
+    isCollectionsImportExportEnabled
       ? {
           action: 'export-collections',
           icon: 'Export',
           label: 'Export collections…',
+        }
+      : null,
+    // Importing writes data, unlike exporting.
+    isCollectionsImportExportEnabled && !hasWriteActionsDisabled
+      ? {
+          action: 'import-collections',
+          icon: 'Import',
+          label: 'Import collections…',
         }
       : null,
     { separator: true },

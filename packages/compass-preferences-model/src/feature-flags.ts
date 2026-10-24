@@ -200,15 +200,15 @@ export const FEATURE_FLAG_DEFINITIONS = [
   },
 
   /*
-   * Feature flag for exporting several collections of a database at once.
+   * Feature flag for exporting and importing several collections of a database at once.
    */
   {
-    name: 'enableExportMultipleCollections',
+    name: 'enableMultipleCollectionsImportExport',
     stage: 'development',
     // Desktop-only: import/export is disabled in Compass Web.
     atlasCloudFeatureScope: 'group',
     description: {
-      short: 'Export multiple collections of a database at once',
+      short: 'Export and import multiple collections of a database at once',
     },
   },
 ] as const satisfies ReadonlyArray<FeatureFlagDefinition>;

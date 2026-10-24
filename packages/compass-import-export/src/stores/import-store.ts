@@ -9,6 +9,14 @@ import {
   openImport,
   connectionDisconnected,
 } from '../modules/import';
+import {
+  cancelImportCollections,
+  closeImportCollections,
+  connectionDisconnected as importCollectionsConnectionDisconnected,
+  importCollectionsReducer,
+  openImportCollections,
+} from '../modules/import-collections';
+import type { ImportCollectionsOrigin } from '../modules/import-collections';
 import type { WorkspacesService } from '@mongodb-js/compass-workspaces/provider';
 import type { Logger } from '@mongodb-js/compass-logging/provider';
 import type { ConnectionsService } from '@mongodb-js/compass-connections/provider';
@@ -27,6 +35,7 @@ export function configureStore(services: ImportPluginServices) {
   return createStore(
     combineReducers({
       import: importReducer,
+      importCollections: importCollectionsReducer,
     }),
     applyMiddleware(thunk.withExtraArgument(services))
   );
@@ -73,6 +82,8 @@ export function activatePlugin(
 
   addCleanup(() => {
     store.dispatch(cancelImport());
+    store.dispatch(cancelImportCollections());
+    store.dispatch(closeImportCollections());
   });
 
   on(
@@ -90,8 +101,31 @@ export function activatePlugin(
     }
   );
 
+  on(
+    globalAppRegistry,
+    'open-import-collections',
+    function onOpenImportCollections(
+      {
+        databaseName,
+        origin,
+      }: { databaseName: string; origin: ImportCollectionsOrigin },
+      { connectionId }: ConnectionMeta = {}
+    ) {
+      if (!connectionId) {
+        throw new Error(
+          'Cannot open Import collections modal without a connectionId'
+        );
+      }
+
+      store.dispatch(
+        openImportCollections({ connectionId, databaseName, origin })
+      );
+    }
+  );
+
   on(connections, 'disconnected', function (connectionId: string) {
     store.dispatch(connectionDisconnected(connectionId));
+    store.dispatch(importCollectionsConnectionDisconnected(connectionId));
   });
 
   return {

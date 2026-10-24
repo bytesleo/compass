@@ -41,4 +41,26 @@ describe('ImportStore [Store]', function () {
     expect(store.getState().import.connectionId).to.equal('TEST');
     expect(store.getState().import.namespace).to.equal('test.coll');
   });
+
+  it(`throws when 'open-import-collections' is emitted without connection metadata`, function () {
+    expect(() => {
+      globalAppRegistry.emit('open-import-collections', {
+        databaseName: 'store',
+        origin: 'sidebar',
+      });
+    }).to.throw();
+  });
+
+  it('opens the import collections modal for the database', function () {
+    globalAppRegistry.emit(
+      'open-import-collections',
+      { databaseName: 'store', origin: 'collections-list' },
+      { connectionId: 'TEST' }
+    );
+    const state = store.getState().importCollections;
+    expect(state.isOpen).to.equal(true);
+    expect(state.connectionId).to.equal('TEST');
+    expect(state.databaseName).to.equal('store');
+    expect(state.status).to.equal('select-folder');
+  });
 });

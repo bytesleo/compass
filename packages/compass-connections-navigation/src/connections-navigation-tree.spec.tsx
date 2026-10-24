@@ -1107,13 +1107,13 @@ describe('ConnectionsNavigationTree', function () {
         expect(within(contextMenu).getByText('Disconnect')).to.be.visible;
       });
 
-      it('should show export collections in the context menu when enabled', async function () {
+      it('should show export and import collections in the context menu when enabled', async function () {
         await renderConnectionsNavigationTree(
           {
             expanded: { connection_ready: {} },
           },
           {
-            enableExportMultipleCollections: true,
+            enableMultipleCollectionsImportExport: true,
           }
         );
 
@@ -1124,6 +1124,7 @@ describe('ConnectionsNavigationTree', function () {
         await assertContextMenuItems(databaseElement, [
           'Create collection',
           'Export collections…',
+          'Import collections…',
           { separator: true },
           'Create database',
           'Drop database',
@@ -1143,7 +1144,7 @@ describe('ConnectionsNavigationTree', function () {
             expanded: { connection_ready: {} },
           },
           {
-            enableExportMultipleCollections: true,
+            enableMultipleCollectionsImportExport: true,
             enableImportExport: false,
           }
         );
@@ -1156,6 +1157,33 @@ describe('ConnectionsNavigationTree', function () {
         const contextMenu = screen.getByTestId('context-menu');
         expect(() =>
           within(contextMenu).getByText('Export collections…')
+        ).to.throw();
+        expect(() =>
+          within(contextMenu).getByText('Import collections…')
+        ).to.throw();
+      });
+
+      it('should show export but not import collections when read-only', async function () {
+        await renderConnectionsNavigationTree(
+          {
+            expanded: { connection_ready: {} },
+          },
+          {
+            enableMultipleCollectionsImportExport: true,
+            readOnly: true,
+          }
+        );
+
+        const databaseElement = within(
+          screen.getByTestId('connection_ready.db_initial')
+        ).getByTestId('base-navigation-item');
+        userEvent.click(databaseElement, { button: 2 });
+
+        const contextMenu = screen.getByTestId('context-menu');
+        expect(within(contextMenu).getByText('Export collections…')).to.be
+          .visible;
+        expect(() =>
+          within(contextMenu).getByText('Import collections…')
         ).to.throw();
       });
     });

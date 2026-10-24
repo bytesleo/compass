@@ -483,6 +483,7 @@ const CollectionsList: React.FunctionComponent<{
   onDeleteCollectionClick?: (id: string) => void;
   onCreateCollectionClick?: () => void;
   onExportCollectionsClick?: () => void;
+  onImportCollectionsClick?: () => void;
   onRefreshClick?: () => void;
   isRefreshing?: boolean;
 }> = ({
@@ -492,6 +493,7 @@ const CollectionsList: React.FunctionComponent<{
   onDeleteCollectionClick,
   onCreateCollectionClick,
   onExportCollectionsClick,
+  onImportCollectionsClick,
   onRefreshClick,
   isRefreshing,
 }) => {
@@ -519,6 +521,7 @@ const CollectionsList: React.FunctionComponent<{
       onDeleteItemClick={onDeleteCollectionClick}
       onCreateItemClick={onCreateCollectionClick}
       onExportItemsClick={onExportCollectionsClick}
+      onImportItemsClick={onImportCollectionsClick}
       onRefreshClick={onRefreshClick}
       isRefreshing={isRefreshing}
     ></TableComponent>

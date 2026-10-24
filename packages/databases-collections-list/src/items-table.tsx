@@ -50,7 +50,7 @@ import {
   buildMonitoringUrl,
 } from '@mongodb-js/atlas-service/provider';
 
-type DataAction = 'export';
+type DataAction = 'export' | 'import';
 
 type Item = {
   _id: string;
@@ -73,6 +73,7 @@ type ItemsTableProps<T> = {
   onDeleteItemClick?: (id: string) => void;
   onCreateItemClick?: () => void;
   onExportItemsClick?: () => void;
+  onImportItemsClick?: () => void;
   onRefreshClick?: () => void;
   isRefreshing?: boolean;
   renderLoadSampleDataBanner?: () => React.ReactNode;
@@ -125,6 +126,7 @@ const TableControls: React.FunctionComponent<{
   itemType: string;
   onCreateItemClick?: () => void;
   onExportItemsClick?: () => void;
+  onImportItemsClick?: () => void;
   onRefreshClick?: () => void;
   isRefreshing?: boolean;
   renderLoadSampleDataBanner?: () => React.ReactNode;
@@ -133,6 +135,7 @@ const TableControls: React.FunctionComponent<{
   itemType,
   onCreateItemClick,
   onExportItemsClick,
+  onImportItemsClick,
   onRefreshClick,
   isRefreshing = false,
   renderLoadSampleDataBanner,
@@ -181,16 +184,21 @@ const TableControls: React.FunctionComponent<{
     if (onExportItemsClick) {
       actions.push({ action: 'export', label: 'Export…', icon: 'Export' });
     }
+    if (onImportItemsClick) {
+      actions.push({ action: 'import', label: 'Import…', icon: 'Import' });
+    }
     return actions;
-  }, [onExportItemsClick]);
+  }, [onExportItemsClick, onImportItemsClick]);
 
   const onDataAction = useCallback(
     (action: DataAction) => {
       if (action === 'export') {
         onExportItemsClick?.();
+      } else {
+        onImportItemsClick?.();
       }
     },
-    [onExportItemsClick]
+    [onExportItemsClick, onImportItemsClick]
   );
 
   const banner = renderLoadSampleDataBanner?.();
@@ -446,6 +454,7 @@ const ItemsTableInner = <T extends Item>({
   onItemClick,
   onCreateItemClick,
   onExportItemsClick,
+  onImportItemsClick,
   onRefreshClick,
   isRefreshing,
   renderLoadSampleDataBanner,
@@ -460,6 +469,7 @@ const ItemsTableInner = <T extends Item>({
   onItemClick: (id: string) => void;
   onCreateItemClick?: () => void;
   onExportItemsClick?: () => void;
+  onImportItemsClick?: () => void;
   onRefreshClick?: () => void;
   isRefreshing?: boolean;
   renderLoadSampleDataBanner?: () => React.ReactNode;
@@ -476,6 +486,7 @@ const ItemsTableInner = <T extends Item>({
             namespace={namespace}
             onCreateItemClick={onCreateItemClick}
             onExportItemsClick={onExportItemsClick}
+            onImportItemsClick={onImportItemsClick}
             onRefreshClick={onRefreshClick}
             isRefreshing={isRefreshing}
             renderLoadSampleDataBanner={renderLoadSampleDataBanner}
@@ -580,6 +591,7 @@ export const VirtualItemsTable = <T extends Item>({
   onDeleteItemClick,
   onCreateItemClick,
   onExportItemsClick,
+  onImportItemsClick,
   onRefreshClick,
   isRefreshing,
   renderLoadSampleDataBanner,
@@ -623,6 +635,7 @@ export const VirtualItemsTable = <T extends Item>({
       onItemClick={onItemClick}
       onCreateItemClick={onCreateItemClick}
       onExportItemsClick={onExportItemsClick}
+      onImportItemsClick={onImportItemsClick}
       onRefreshClick={onRefreshClick}
       isRefreshing={isRefreshing}
       renderLoadSampleDataBanner={renderLoadSampleDataBanner}
@@ -653,6 +666,7 @@ export const ItemsTable = <T extends Item>({
   onDeleteItemClick,
   onCreateItemClick,
   onExportItemsClick,
+  onImportItemsClick,
   onRefreshClick,
   isRefreshing,
   renderLoadSampleDataBanner,
@@ -686,6 +700,7 @@ export const ItemsTable = <T extends Item>({
       onItemClick={onItemClick}
       onCreateItemClick={onCreateItemClick}
       onExportItemsClick={onExportItemsClick}
+      onImportItemsClick={onImportItemsClick}
       onRefreshClick={onRefreshClick}
       isRefreshing={isRefreshing}
       renderLoadSampleDataBanner={renderLoadSampleDataBanner}

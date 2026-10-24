@@ -33,6 +33,7 @@ export type Actions =
   | 'create-database'
   | 'drop-database'
   | 'export-collections'
+  | 'import-collections'
   // collection item related action
   | 'select-collection'
   | 'create-collection'

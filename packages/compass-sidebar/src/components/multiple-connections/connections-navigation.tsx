@@ -714,6 +714,13 @@ const onNamespaceAction = (
           { connectionId }
         );
         return;
+      case 'import-collections':
+        emit(
+          'open-import-collections',
+          { databaseName: ns.database, origin: 'sidebar' },
+          { connectionId }
+        );
+        return;
       case 'rename-collection':
         emit('open-rename-collection', ns, { connectionId });
         return;

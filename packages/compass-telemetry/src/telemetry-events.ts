@@ -1549,6 +1549,89 @@ type ExportCollectionsCompletedEvent = ConnectionScopedEvent<{
 }>;
 
 /**
+ * This event is fired when the modal to import several collections into a
+ * database is opened.
+ *
+ * @category Import/Export
+ */
+type ImportCollectionsOpenedEvent = ConnectionScopedEvent<{
+  name: 'Import Collections Opened';
+  payload: {
+    /**
+     * The trigger location for the import.
+     */
+    origin: 'sidebar' | 'collections-list';
+  };
+}>;
+
+/**
+ * This event is fired when an import of several collections into a database
+ * completes.
+ *
+ * @category Import/Export
+ */
+type ImportCollectionsCompletedEvent = ConnectionScopedEvent<{
+  name: 'Import Collections Completed';
+  payload: {
+    /**
+     * The number of selected JSON files.
+     */
+    json_file_count: number;
+
+    /**
+     * The number of selected CSV files.
+     */
+    csv_file_count: number;
+
+    /**
+     * What happens to a selected collection that already exists.
+     */
+    existing_collection_mode: 'append' | 'skip' | 'replace';
+
+    /**
+     * Indicates whether indexes and collection options were created from the
+     * metadata files.
+     */
+    apply_metadata: boolean;
+
+    /**
+     * The number of files that failed to import.
+     */
+    failed_count: number;
+
+    /**
+     * The number of files skipped because their collection already exists.
+     */
+    skipped_count: number;
+
+    /**
+     * The total number of documents imported across all collections.
+     */
+    number_of_docs: number;
+
+    /**
+     * The total number of documents that failed to import.
+     */
+    number_of_errors: number;
+
+    /**
+     * Indicates whether every selected file was imported without errors.
+     */
+    success: boolean;
+
+    /**
+     * Indicates whether the import was stopped before completion.
+     */
+    stopped: boolean;
+
+    /**
+     * The duration of the import operation in milliseconds.
+     */
+    duration: number;
+  };
+}>;
+
+/**
  * This event is fired when a data import completes.
  *
  * @category Import/Export
@@ -4518,6 +4601,8 @@ export type TelemetryEvent =
   | GuideCueDismissedEvent
   | GuideCueGroupDismissedEvent
   | IdentifyEvent
+  | ImportCollectionsCompletedEvent
+  | ImportCollectionsOpenedEvent
   | ImportCompletedEvent
   | ImportErrorLogOpenedEvent
   | ImportOpenedEvent

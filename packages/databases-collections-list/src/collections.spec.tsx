@@ -223,6 +223,23 @@ describe('Collections', () => {
     ).to.have.text('Collections');
     userEvent.click(screen.getByText('Export…'));
     expect(exportSpy.calledOnce).to.be.true;
+    expect(screen.queryByText('Import…')).to.not.exist;
+  });
+
+  it('renders import in the same menu when an import handler is passed', () => {
+    const importSpy = Sinon.spy();
+    renderCollectionsList({
+      collections: colls,
+      onExportCollectionsClick: Sinon.spy(),
+      onImportCollectionsClick: importSpy,
+    });
+
+    userEvent.click(
+      screen.getByTestId('collections-data-actions-show-actions')
+    );
+    expect(screen.getByText('Export…')).to.exist;
+    userEvent.click(screen.getByText('Import…'));
+    expect(importSpy.calledOnce).to.be.true;
   });
 
   it('renders "-" for a collection whose storage size was not reported', () => {

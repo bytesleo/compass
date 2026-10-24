@@ -137,6 +137,19 @@ export const exportCollections = (
   };
 };
 
+export const importCollections = (
+  connectionId: string,
+  dbName: string
+): CollectionsThunkAction<void> => {
+  return (_dispatch, _getState, { globalAppRegistry }) => {
+    globalAppRegistry.emit(
+      'open-import-collections',
+      { databaseName: dbName, origin: 'collections-list' },
+      { connectionId }
+    );
+  };
+};
+
 export const deleteCollection = (
   connectionId: string,
   namespace: string
