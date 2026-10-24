@@ -7,7 +7,8 @@ import {
   Body,
   Button,
   Checkbox,
-  FilePickerDialog,
+  Description,
+  Icon,
   Label,
   Modal,
   ModalBody,
@@ -17,6 +18,7 @@ import {
   RadioGroup,
   SpinLoader,
   TextInput,
+  createElectronFileInputBackend,
   css,
   spacing,
 } from '@mongodb-js/compass-components';
@@ -51,6 +53,21 @@ const fileRowStyles = css({
   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) auto',
   alignItems: 'center',
   gap: spacing[200],
+});
+
+const folderPickerStyles = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: spacing[200],
+  marginTop: spacing[200],
+  minWidth: 0,
+});
+
+const folderPathStyles = css({
+  minWidth: 0,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 });
 
 const loaderStyles = css({
@@ -124,14 +141,26 @@ function ImportCollectionsModal({
   ).length;
   const hasMetadataFiles = selectedFiles.some((file) => file.metadataPath);
 
-  const onChooseDirectory = useCallback(
-    (paths: string[]) => {
+  const onClickSelectFolder = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports, @typescript-eslint/no-require-imports
+    const electron: typeof import('@electron/remote') = require('@electron/remote');
+    const fileBackend = createElectronFileInputBackend(electron, null)();
+
+    fileBackend.onFilesChosen((paths: string[]) => {
       if (paths.length > 0) {
         selectImportDirectory(paths[0]);
       }
-    },
-    [selectImportDirectory]
-  );
+    });
+
+    fileBackend.openFileChooser({
+      multi: false,
+      mode: 'open',
+      title: 'Select a folder to import',
+      buttonLabel: 'Select',
+      defaultPath: directoryPath || undefined,
+      properties: ['openDirectory'],
+    });
+  }, [directoryPath, selectImportDirectory]);
 
   const onSelectDirectoryEvent = useCallback(
     ({ detail: path }: CustomEventInit<string>) => {
@@ -168,18 +197,31 @@ function ImportCollectionsModal({
         subtitle={`Database ${databaseName}`}
       />
       <ModalBody>
-        <FilePickerDialog
-          id="import-collections-folder"
-          label="Folder:"
-          variant="small"
-          mode="open"
-          title="Select a folder to import"
-          buttonLabel="Select"
-          properties={['openDirectory']}
-          values={directoryPath ? [directoryPath] : undefined}
-          onChange={onChooseDirectory}
-          description="For example a folder created with Export collections: one JSON or CSV file per collection, optionally with .metadata.json files."
-        />
+        <Label htmlFor="import-collections-select-folder">Folder</Label>
+        <Description>
+          For example a folder created with Export collections: one JSON or CSV
+          file per collection, optionally with .metadata.json files.
+        </Description>
+        <div className={folderPickerStyles}>
+          <Button
+            id="import-collections-select-folder"
+            data-testid="import-collections-select-folder"
+            size="small"
+            leftGlyph={<Icon glyph="Folder" />}
+            onClick={onClickSelectFolder}
+          >
+            {directoryPath ? 'Change folder…' : 'Select folder…'}
+          </Button>
+          {directoryPath && (
+            <Body
+              className={folderPathStyles}
+              data-testid="import-collections-folder-path"
+            >
+              {/* The full path on hover, as long paths are truncated. */}
+              <span title={directoryPath}>{directoryPath}</span>
+            </Body>
+          )}
+        </div>
         {status === 'loading-files' && (
           <div className={loaderStyles}>
             <SpinLoader />
