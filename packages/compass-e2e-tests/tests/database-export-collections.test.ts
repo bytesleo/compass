@@ -49,7 +49,7 @@ describe('Database export collections', function () {
     compass = await init(this.test?.fullTitle());
     browser = compass.browser;
     await browser.setupDefaultConnections();
-    await browser.setFeature('enableExportMultipleCollections', true);
+    await browser.setFeature('enableMultipleCollectionsImportExport', true);
   });
 
   after(async function () {

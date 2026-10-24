@@ -262,6 +262,53 @@ describe('importCollectionsFromDirectory', function () {
     });
   }
 
+  it('recreates capped and time series collections', async function () {
+    await dataService.createCollection(`${sourceDB}.logs`, {
+      capped: true,
+      size: 4096,
+      max: 10,
+    });
+    await dataService.insertOne(`${sourceDB}.logs`, { level: 'info' });
+    await dataService.createCollection(`${sourceDB}.metrics`, {
+      timeseries: { timeField: 'at', metaField: 'sensor' },
+    });
+    await dataService.insertOne(`${sourceDB}.metrics`, {
+      at: new Date('2026-01-01'),
+      sensor: 'a',
+      value: 1,
+    });
+    await exportCollectionsToDirectory({
+      databaseName: sourceDB,
+      collectionNames: ['logs', 'metrics'],
+      directoryPath: tmpdir,
+      dataService,
+      fileType: 'json',
+      variant: 'canonical',
+      includeMetadata: true,
+    });
+
+    const result = await importAll();
+
+    expect(result.collections.map((c) => c.status)).to.deep.equal([
+      'imported',
+      'imported',
+    ]);
+    expect(await dataService.collectionOptions(targetDB, 'logs')).to.include({
+      capped: true,
+      size: 4096,
+      max: 10,
+    });
+    const metricsOptions = await dataService.collectionOptions(
+      targetDB,
+      'metrics'
+    );
+    expect(metricsOptions.timeseries).to.include({
+      timeField: 'at',
+      metaField: 'sensor',
+    });
+    expect(await dataService.count(`${targetDB}.metrics`, {})).to.equal(1);
+  });
+
   it('round-trips collections whose names only differ by case', async function () {
     await dataService.insertOne(`${sourceDB}.Products`, { upper: true });
     await exportCollectionsToDirectory({

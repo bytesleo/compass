@@ -1378,6 +1378,8 @@ export const CollectionsDataActionsButton =
   '[data-testid="collections-data-actions-show-actions"]';
 export const CollectionsDataActionsExport =
   '[data-testid="collections-data-actions-export-action"]';
+export const CollectionsDataActionsImport =
+  '[data-testid="collections-data-actions-import-action"]';
 
 // Export collections modal
 export const ExportCollectionsModal =
@@ -1390,6 +1392,20 @@ export const ExportCollectionsExportButton =
   '[data-testid="export-collections-modal"] [data-testid="export-collections-export-button"]';
 export const ExportCollectionsToast =
   '[data-testid="toast-export-collections-toast"]';
+
+// Import collections modal
+export const ImportCollectionsModal =
+  '[data-testid="import-collections-modal"]';
+export const importCollectionsFile = (fileName: string): string =>
+  `[data-testid="import-collections-modal"] [data-testid="import-collections-file-${fileName}"]`;
+export const importCollectionsExistingMode = (
+  mode: 'append' | 'skip' | 'replace'
+): string =>
+  `[data-testid="import-collections-modal"] input[type="radio"][value="${mode}"]`;
+export const ImportCollectionsImportButton =
+  '[data-testid="import-collections-modal"] [data-testid="import-collections-import-button"]';
+export const ImportCollectionsToast =
+  '[data-testid="toast-import-collections-toast"]';
 
 // Export to language modal
 export const ExportToLanguageModal = '[data-testid="export-to-language-modal"]';
