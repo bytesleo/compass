@@ -48,9 +48,15 @@ const fileListStyles = css({
   gap: spacing[200],
 });
 
+const modalBodyStyles = css({
+  paddingTop: spacing[400],
+});
+
 const fileRowStyles = css({
   display: 'grid',
-  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) auto',
+  // A fixed badge column keeps the collection name inputs aligned whether the
+  // badge says "New" or "Exists".
+  gridTemplateColumns: `minmax(0, 1fr) minmax(0, 1fr) ${spacing[1600]}px`,
   alignItems: 'center',
   gap: spacing[200],
 });
@@ -61,6 +67,11 @@ const folderPickerStyles = css({
   gap: spacing[200],
   marginTop: spacing[200],
   minWidth: 0,
+});
+
+const folderButtonStyles = css({
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
 });
 
 const folderPathStyles = css({
@@ -196,7 +207,7 @@ function ImportCollectionsModal({
         title="Import collections"
         subtitle={`Database ${databaseName}`}
       />
-      <ModalBody>
+      <ModalBody className={modalBodyStyles}>
         <Label htmlFor="import-collections-select-folder">Folder</Label>
         <Description>
           For example a folder created with Export collections: one JSON or CSV
@@ -206,6 +217,7 @@ function ImportCollectionsModal({
           <Button
             id="import-collections-select-folder"
             data-testid="import-collections-select-folder"
+            className={folderButtonStyles}
             size="small"
             leftGlyph={<Icon glyph="Folder" />}
             onClick={onClickSelectFolder}
